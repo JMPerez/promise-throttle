@@ -1,0 +1,17 @@
+{
+  "name": "promise-throttle",
+  "version": "0.0.1",
+  "homepage": "https://github.com/jmperez/promise-throttle",
+  "description": "A library to throttle promises",
+  "main": "main.js",
+  "author": "Jose M. Perez",
+  "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/jmperez/promise-throttle.git"
+  },
+  "keywords": [
+    "promise",
+    "throttle"
+  ]
+}
