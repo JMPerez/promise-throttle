@@ -9,17 +9,13 @@ It doesn't have any dependencies. If you are running this on Node.js, you will n
 
 Then, you add functions to the `PromiseThrottle` that, once called, return a `Promise`.
 
-## Installation
-
-Install the module with: `npm install promise-throttle
-
 ## Example
 
 ```javascript
 
   var promiseThrottle = new PromiseThrottle({
     requestsPerSecond: 10,          // up to 10 requests per second
-    promiseImplementation: Promise  // the Promise library
+    promiseImplementation: Promise  // the Promise library you are using
   };
 
   var amountOfPromises = 1000;
@@ -34,6 +30,10 @@ Install the module with: `npm install promise-throttle
   };
 
 ```
+
+## Installation
+
+Install the module with: `npm install promise-throttle`
 
 ## License
 

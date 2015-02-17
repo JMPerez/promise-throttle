@@ -1,5 +1,5 @@
 var Promise = require('promise'),
-    PromiseThrottle = require('../main');
+    PromiseThrottle = require('../lib/main');
 
 var promiseThrottle = new PromiseThrottle({
   requestsPerSecond: 10,
