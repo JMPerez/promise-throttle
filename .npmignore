@@ -1,2 +1,3 @@
 .jshintrc
 .npmignore
+node_modules

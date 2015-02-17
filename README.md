@@ -5,6 +5,12 @@ This is a small library to limit the amount of promises run per unit of time. It
 
 It doesn't have any dependencies. If you are running this on Node.js, you will need to pass whatever Promise library you are using in the constructor.
 
+Then, you add functions to the `PromiseThrottle` that, once called, return a `Promise`.
+
+## Installation
+
+Install the module with: `npm install promise-throttle
+
 ## Example
 
 ```javascript
@@ -27,6 +33,6 @@ It doesn't have any dependencies. If you are running this on Node.js, you will n
 
 ```
 
-## Todo
+## License
 
-- [] Tests
+MIT
