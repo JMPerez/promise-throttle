@@ -9,25 +9,35 @@ It doesn't have any dependencies. If you are running this on Node.js, you will n
 
 Then, you add functions to the `PromiseThrottle` that, once called, return a `Promise`.
 
-## Example
+## Use
+
+The library can be used either server-side or in the browser.
 
 ```javascript
+
+  /**
+   * A function that once called returns a promise
+   * @return Promise
+   */
+  var myFunction = function() {
+    return new Promise(function(resolve, reject) {
+      // here we simulate that the promise runs some code
+      // asynchronously
+      setTimeout(function() {
+        console.log(Math.random());
+      }, 10);
+    });
+  };
 
   var promiseThrottle = new PromiseThrottle({
     requestsPerSecond: 10,          // up to 10 requests per second
     promiseImplementation: Promise  // the Promise library you are using
-  };
+  });
 
   var amountOfPromises = 1000;
   while (amountOfPromises-- > 0) {
-    promiseThrottle.add(function() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          console.log(Math.random());
-        }, 10);
-      });
-    });
-  };
+    promiseThrottle.add(myFunction);
+  }
 
 ```
 
