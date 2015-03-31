@@ -8,9 +8,9 @@ var promiseThrottle = new PromiseThrottle({
 
 function createPromise() {
   return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        console.log(Math.random());
-      }, 10);
+    setTimeout(function() {
+      console.log(Math.random());
+    }, 10);
   });
 }
 
