@@ -36,6 +36,18 @@ describe('Basic tests', function() {
     pt10.add(fn);
   });
 
+ it('should fail if the promise fails 2', function(done) {
+    var pt10 = new PromiseThrottle({
+      requestsPerSecond: 10,
+      promiseImplementation: Promise
+    });
+    return new Promise(function(resolve, reject) {
+      reject('some_error');
+      done();
+    });
+    pt10.add(fn);
+  });
+
   it('should work adding a bunch of functions, exceeding the requestsPerSecond value', function(done) {
     this.timeout(4000);
     var pt10 = new PromiseThrottle({

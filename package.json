@@ -1,6 +1,6 @@
 {
   "name": "promise-throttle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/jmperez/promise-throttle",
   "description": "A library to throttle promises",
   "main": "lib/main.js",
