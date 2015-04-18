@@ -15,7 +15,7 @@
     "lib",
     "node_modules",
     "test",
-    ".coveralls.yml"
+    ".coveralls.yml",
     ".gitignore",
     ".jshintrc",
     ".travis.yml",
