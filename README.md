@@ -45,6 +45,13 @@ The library can be used either server-side or in the browser.
 
 Install the module with: `npm install promise-throttle`
 
+## Projects using it
+
+See how some projects are using it:
+
+- [ivasilov/promised-twitter](https://github.com/ivasilov/promised-twitter)
+- [JMPerez/spotify-dedup](https://github.com/JMPerez/spotify-dedup)
+
 ## License
 
 MIT
