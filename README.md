@@ -43,7 +43,9 @@ The library can be used either server-side or in the browser.
 
 ## Installation
 
-Install the module with: `npm install promise-throttle`
+For node.js, install the module with: `npm i promise-throttle`
+
+If you are using it in a browser, you can use bower: `bower install promise-throttle`
 
 ## Projects using it
 

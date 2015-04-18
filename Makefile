@@ -4,6 +4,9 @@
 
 REPORTER = spec
 
+dist:
+	mkdir -p dist && browserify lib/browser.js -o dist/promise-throttle.js
+
 test:
 	@NODE_ENV=test NODE_PATH=lib ./node_modules/.bin/mocha \
 		--reporter $(REPORTER)
@@ -24,4 +27,4 @@ coveralls:
 # Static Analysis
 # ==============================================================================
 
-.PHONY: test coverage
+.PHONY: test coverage dist

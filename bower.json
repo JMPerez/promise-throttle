@@ -1,0 +1,26 @@
+{
+  "name": "promise-throttle",
+  "version": "0.2.0",
+  "homepage": "https://github.com/JMPerez/promise-throttle",
+  "authors": [
+    "José M. Pérez <jmperez1985@gmail.com>"
+  ],
+  "description": "A library to throttle promises",
+  "main": "dist/promise-throttle.js",
+  "keywords": [
+    "promise",
+    "throttle"
+  ],
+  "ignore": [
+    "lib",
+    "node_modules",
+    "test",
+    ".coveralls.yml"
+    ".gitignore",
+    ".jshintrc",
+    ".travis.yml",
+    "Makefile",
+    "package.json"
+  ],
+  "license": "MIT"
+}
