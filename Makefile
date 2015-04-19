@@ -4,6 +4,14 @@
 
 REPORTER = spec
 
+all: lint test coverage dist
+
+install:
+	npm install && npm install eslint -g
+
+lint:
+	eslint lib/*.js
+
 dist:
 	mkdir -p dist && browserify lib/browser.js -o dist/promise-throttle.js
 
@@ -27,4 +35,4 @@ coveralls:
 # Static Analysis
 # ==============================================================================
 
-.PHONY: test coverage dist
+.PHONY: lint test coverage dist

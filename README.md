@@ -47,6 +47,11 @@ For node.js, install the module with: `npm i promise-throttle`
 
 If you are using it in a browser, you can use bower: `bower install promise-throttle`
 
+## Development
+
+Install the dependencies using `make install`.
+Run `make` to lint, test and generate the dist file.
+
 ## Projects using it
 
 See how some projects are using it:

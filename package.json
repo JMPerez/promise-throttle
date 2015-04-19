@@ -23,10 +23,10 @@
     "throttle"
   ],
   "devDependencies": {
-    "mocha-lcov-reporter": "0.0.1",
-    "mocha": "~2.1.0",
-    "coveralls": "~2.11.2",
     "blanket": "~1.1.6",
+    "coveralls": "~2.11.2",
+    "mocha": "~2.1.0",
+    "mocha-lcov-reporter": "0.0.1",
     "promise": "~6.1.0",
     "sinon": "~1.12.2"
   }
