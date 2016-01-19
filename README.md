@@ -14,30 +14,43 @@ Then, you add functions to the `PromiseThrottle` that, once called, return a `Pr
 The library can be used either server-side or in the browser.
 
 ```javascript
-
+  var PromiseThrottle = require('promise-throttle');
   /**
    * A function that once called returns a promise
    * @return Promise
    */
-  var myFunction = function() {
+  var myFunction = function(i) {
     return new Promise(function(resolve, reject) {
       // here we simulate that the promise runs some code
       // asynchronously
       setTimeout(function() {
-        console.log(Math.random());
+        console.log(i + ": " + Math.random());
+        resolve(i);
       }, 10);
     });
   };
 
   var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 10,          // up to 10 requests per second
+    requestsPerSecond: 1,           // up to 1 requests per second
     promiseImplementation: Promise  // the Promise library you are using
   });
 
-  var amountOfPromises = 1000;
+  var amountOfPromises = 10;
   while (amountOfPromises-- > 0) {
-    promiseThrottle.add(myFunction);
+    promiseThrottle.add(myFunction.bind(this, amountOfPromises))
+      .then(i => console.log("Promise " + i + " done"));
   }
+
+  // example using Promise.all
+  var one = promiseThrottle.add(myFunction.bind(this, 1));
+  var two = promiseThrottle.add(myFunction.bind(this, 2));
+  var three = promiseThrottle.add(myFunction.bind(this, 3));
+
+  Promise.all([one, two, three])
+    .then(r => {
+        console.log(r);
+        console.log("Promises " + r.join(", ") + " done")
+    });
 
 ```
 
