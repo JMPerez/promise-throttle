@@ -31,14 +31,16 @@ The library can be used either server-side or in the browser.
   };
 
   var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 1,           // up to 1 requests per second
+    requestsPerSecond: 1,           // up to 1 request per second
     promiseImplementation: Promise  // the Promise library you are using
   });
 
   var amountOfPromises = 10;
   while (amountOfPromises-- > 0) {
     promiseThrottle.add(myFunction.bind(this, amountOfPromises))
-      .then(i => console.log("Promise " + i + " done"));
+      .then(function(i) {
+        console.log("Promise " + i + " done");
+      });
   }
 
   // example using Promise.all
@@ -47,11 +49,9 @@ The library can be used either server-side or in the browser.
   var three = promiseThrottle.add(myFunction.bind(this, 3));
 
   Promise.all([one, two, three])
-    .then(r => {
-        console.log(r);
-        console.log("Promises " + r.join(", ") + " done")
+    .then(function(r) {
+        console.log("Promises " + r.join(", ") + " done");
     });
-
 ```
 
 ## Installation
