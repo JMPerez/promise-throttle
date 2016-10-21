@@ -71,6 +71,9 @@ See how some projects are using it:
 
 - [ivasilov/promised-twitter](https://github.com/ivasilov/promised-twitter)
 - [JMPerez/spotify-dedup](https://github.com/JMPerez/spotify-dedup)
+- [johannesss/randify](https://github.com/johannesss/randify)
+- [JoseBarrios/mturk-api](https://github.com/JoseBarrios/mturk-api)
+- [zackiles/lucy-bot](https://github.com/zackiles/lucy-bot)
 
 ## License
 
