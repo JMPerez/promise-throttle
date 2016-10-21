@@ -7,7 +7,7 @@ rules:
     curly: 2
     default-case: 2
     eqeqeq: 2
-    func-style: [2, "declaration"]
+    func-style: [1, "declaration"]
     guard-for-in: 2
     indent: [2, 2]
     new-cap: 0
