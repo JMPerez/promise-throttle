@@ -7,7 +7,7 @@ REPORTER = spec
 all: lint test coverage dist
 
 install:
-	npm install && npm install eslint -g
+	npm install && npm install eslint@0.19.0 -g
 
 lint:
 	eslint lib/*.js
