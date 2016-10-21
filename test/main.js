@@ -1,90 +1,182 @@
+/* global describe, it */
+
+'use strict';
+
 var assert = require('assert');
 var sinon = require('sinon');
 var Promise = require('promise');
 
 var PromiseThrottle = require('../lib/main');
 
-describe('Basic tests', function() {
+function createPromiseThrottle(rps) {
+  return new PromiseThrottle({
+    requestsPerSecond: rps,
+    promiseImplementation: Promise
+  });
+}
 
-  it('should work right away with a single function', function(done) {
-    var pt10 = new PromiseThrottle({
-      requestsPerSecond: 10,
-      promiseImplementation: Promise
+describe('PromiseThrottle', function() {
+
+  it('should have the following API: add(), addAll()', function() {
+    assert.strictEqual(typeof PromiseThrottle.prototype.add, 'function');
+    assert.strictEqual(typeof PromiseThrottle.prototype.addAll, 'function');
+  });
+
+  describe('#add(fn)', function() {
+
+    it('should return a promise', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fn = function() {
+        return Promise.resolve();
+      };
+
+      pt10.add(fn)
+        .then(function() {
+          done();
+        })
+        .catch(done.fail);
     });
 
-    var fn = function() {
-      return new Promise(function(resolve, reject) {
+    it('should be resolved with the resolved value of the promise returned by the function', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fn = function() {
+        return Promise.resolve(42);
+      };
+
+      pt10.add(fn)
+        .then(function(value) {
+          assert.strictEqual(value, 42);
+          done();
+        })
+        .catch(done.fail);
+    });
+
+    it('should be rejected with the rejected error of the promise returned by the function', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fnError = new Error('Ooops!');
+      var fn = function() {
+        return Promise.reject(fnError);
+      };
+
+      pt10.add(fn)
+        .then(done.fail)
+        .catch(function(error) {
+          assert.strictEqual(error, fnError);
+          done();
+        });
+    });
+
+    it('should be rejected with the error thrown by the function', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fnError = new Error('Ooops!');
+      var fn = function() {
+        throw fnError;
+      };
+
+      pt10.add(fn)
+        .then(done.fail)
+        .catch(function(error) {
+          assert.strictEqual(error, fnError);
+          done();
+        });
+    });
+
+  });
+
+  describe('#addAll([fn1, fn2, ...])', function() {
+
+    it('should add all the functions passed as parameter', function() {
+      var pt10 = createPromiseThrottle(10);
+
+      var fn1 = function() {};
+      var fn2 = function() {};
+
+      sinon.stub(pt10, 'add');
+
+      pt10.addAll([fn1, fn2]);
+
+      assert(pt10.add.calledWith(fn1));
+      assert(pt10.add.calledWith(fn2));
+    });
+
+    it('should return a promise that is resolved with the proper values', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fn1 = function() {
+        return Promise.resolve(12);
+      };
+      var fn2 = function() {
+        return Promise.resolve(34);
+      };
+
+      pt10.addAll([fn1, fn2])
+        .then(function(values) {
+          assert.strictEqual(values[0], 12);
+          assert.strictEqual(values[1], 34);
+          done();
+        })
+        .catch(done.fail);
+    });
+
+    it('should return a promise that is rejected whenever one of the function rejects its promise', function(done) {
+      var pt10 = createPromiseThrottle(10);
+
+      var fn1 = function() {
+        return Promise.resolve(12);
+      };
+      var fnError = new Error('Ooops!');
+      var fn2 = function() {
+        return Promise.resolve(fnError);
+      };
+
+      pt10.addAll([fn1, fn2])
+        .then(function(values) {
+          assert.strictEqual(values[0], 12);
+          assert.strictEqual(values[1], fnError);
+          done();
+        })
+        .catch(done.fail);
+    });
+
+    it('should throttle properly the function calls, respecting the number of "requestsPerSecond" option', function(done) {
+      this.timeout(4000);
+
+      var pt10 = createPromiseThrottle(10);
+
+      var count = 30,
+          fns = [],
+          resolvedCount = 0,
+          resolved = [],
+          fn = function() {
+            resolvedCount++;
+            return Promise.resolve();
+          };
+
+      while (count-- > 0) {
+        fns.push(fn);
+      }
+
+      pt10.addAll(fns);
+
+      setTimeout(function() {
+        resolved.push(resolvedCount);
+      }, 1000);
+
+      setTimeout(function() {
+        resolved.push(resolvedCount);
+      }, 2000);
+
+      setTimeout(function() {
+        resolved.push(resolvedCount);
+        assert.deepEqual([10, 20, 30], resolved);
         done();
-      });
-    };
-    pt10.add(fn);
-  });
-
-  it('should fail if the promise fails', function(done) {
-    var pt10 = new PromiseThrottle({
-      requestsPerSecond: 10,
-      promiseImplementation: Promise
+      }, 3500);
     });
 
-    var fn = function() {
-      return new Promise(function(resolve, reject) {
-        throw 'Something went wrong';
-      }).catch(function() {
-        done();
-      });
-    };
-    pt10.add(fn);
-  });
-
- it('should fail if the promise fails 2', function(done) {
-    var pt10 = new PromiseThrottle({
-      requestsPerSecond: 10,
-      promiseImplementation: Promise
-    });
-    return new Promise(function(resolve, reject) {
-      reject('some_error');
-      done();
-    });
-    pt10.add(fn);
-  });
-
-  it('should work adding a bunch of functions, exceeding the requestsPerSecond value', function(done) {
-    this.timeout(4000);
-    var pt10 = new PromiseThrottle({
-      requestsPerSecond: 10,
-      promiseImplementation: Promise
-    });
-
-    var count = 30,
-        fns = [],
-        resolved = 0,
-        arrayResolved = [],
-        fn = function() {
-          return new Promise(function(resolve, reject) {
-            resolve();
-            resolved++;
-          });
-        };
-
-    while (count > 0) {
-      fns.push(fn);
-      count--;
-    }
-
-    pt10.addAll(fns);
-    setTimeout(function() {
-      arrayResolved.push(resolved);
-    }, 1000);
-
-    setTimeout(function() {
-      arrayResolved.push(resolved);
-    }, 2000);
-
-    setTimeout(function() {
-      arrayResolved.push(resolved);
-      assert.deepEqual([10, 20, 30], arrayResolved);
-      done();
-    }, 3500);
   });
 
 });
