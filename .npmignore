@@ -1,4 +1,5 @@
-.jshintrc
+.coveralls.yml
+.eslintrc
 .npmignore
 node_modules
 lib/browser.js
