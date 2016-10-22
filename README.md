@@ -1,7 +1,5 @@
-Promise Throttle
+Promise Throttle &nbsp; [![Build Status](https://api.travis-ci.org/JMPerez/promise-throttle.svg)](https://travis-ci.org/JMPerez/promise-throttle/) [![Coverage Status](https://coveralls.io/repos/github/JMPerez/promise-throttle/badge.svg?branch=master)](https://coveralls.io/r/JMPerez/promise-throttle?branch=master)
 ==================
-
-[![Build Status](https://api.travis-ci.org/JMPerez/promise-throttle.svg)](https://travis-ci.org/JMPerez/promise-throttle/) &nbsp; [![Coverage Status](https://coveralls.io/repos/github/JMPerez/promise-throttle/badge.svg?branch=master)](https://coveralls.io/r/JMPerez/promise-throttle?branch=master)
 
 This is a small library to limit the amount of promises run per unit of time. It is useful for scenarios such as Rest APIs consumption, where we are normally rate-limited to a certain amount of requests per time.
 
