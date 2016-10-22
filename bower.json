@@ -1,6 +1,6 @@
 {
   "name": "promise-throttle",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "homepage": "https://github.com/JMPerez/promise-throttle",
   "authors": [
     "José M. Pérez <jmperez1985@gmail.com>"
@@ -14,12 +14,11 @@
   "ignore": [
     "lib",
     "node_modules",
-    "test",
+    "__tests__",
     ".coveralls.yml",
     ".gitignore",
-    ".jshintrc",
+    ".eslintrc",
     ".travis.yml",
-    "Makefile",
     "package.json"
   ],
   "license": "MIT"
