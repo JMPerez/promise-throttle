@@ -15,7 +15,7 @@
     "dist": "mkdir -p dist && browserify lib/browser.js -o dist/promise-throttle.js",
     "lint": "eslint lib/*.js",
     "test": "npm run lint && jest --coverage",
-    "travis": "npm test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "travis": "npm test && cat ./coverage/lcov.info | coveralls"
   },
   "keywords": [
     "promise",

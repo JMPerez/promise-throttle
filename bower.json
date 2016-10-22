@@ -14,12 +14,11 @@
   "ignore": [
     "lib",
     "node_modules",
-    "test",
+    "__tests__",
     ".coveralls.yml",
     ".gitignore",
-    ".jshintrc",
+    ".eslintrc",
     ".travis.yml",
-    "Makefile",
     "package.json"
   ],
   "license": "MIT"

@@ -63,7 +63,7 @@ If you are using it in a browser, you can use bower: `bower install promise-thro
 ## Development
 
 Install the dependencies using `npm install`.
-Run `npm start` to generate the dist file.
+Run `npm start` to lint, test and browserify promise-thottle.
 
 ## Projects using it
 
