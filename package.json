@@ -21,6 +21,9 @@
     "promise",
     "throttle"
   ],
+  "files": [
+    "lib/main.js"
+  ],
   "devDependencies": {
     "coveralls": "~2.11.2",
     "eslint": "^3.8.0",
