@@ -17,6 +17,10 @@ function createPromiseThrottle(rps) {
 
 describe('PromiseThrottle', function() {
 
+  beforeEach(function() {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
+
   it('should have the following API: add(), addAll()', function() {
     assert.strictEqual(typeof PromiseThrottle.prototype.add, 'function');
     assert.strictEqual(typeof PromiseThrottle.prototype.addAll, 'function');
@@ -143,8 +147,6 @@ describe('PromiseThrottle', function() {
     });
 
     it('should throttle properly the function calls, respecting the number of "requestsPerSecond" option', function(done) {
-      this.timeout(4000);
-
       var pt10 = createPromiseThrottle(10);
 
       var count = 30,

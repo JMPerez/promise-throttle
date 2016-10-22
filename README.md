@@ -62,8 +62,8 @@ If you are using it in a browser, you can use bower: `bower install promise-thro
 
 ## Development
 
-Install the dependencies using `make install`.
-Run `make` to lint, test and generate the dist file.
+Install the dependencies using `npm install`.
+Run `npm start` to generate the dist file.
 
 ## Projects using it
 

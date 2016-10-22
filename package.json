@@ -11,22 +11,20 @@
     "url": "https://github.com/jmperez/promise-throttle.git"
   },
   "scripts": {
-    "test": "make test"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "//^(?!.*node_modules.*$).*lib//"
-    }
+    "start": "npm run dist",
+    "dist": "mkdir -p dist && browserify lib/browser.js -o dist/promise-throttle.js",
+    "lint": "eslint lib/*.js",
+    "test": "npm run lint && jest --coverage",
+    "travis": "npm test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "keywords": [
     "promise",
     "throttle"
   ],
   "devDependencies": {
-    "blanket": "~1.1.6",
     "coveralls": "~2.11.2",
-    "mocha": "~2.1.0",
-    "mocha-lcov-reporter": "0.0.1",
+    "eslint": "^3.8.0",
+    "jest-cli": "^16.0.2",
     "promise": "~6.1.0",
     "sinon": "~1.12.2"
   }
