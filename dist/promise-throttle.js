@@ -1,10 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* global window */
-
-'use strict';
-window.PromiseThrottle = require('./main');
-
-},{"./main":2}],2:[function(require,module,exports){
 /* exported PromiseThrottle */
 
 'use strict';
@@ -24,7 +18,7 @@ function PromiseThrottle(options) {
 
 /**
  * Adds a promise
- * @param {Promise} promise The promise to be added
+ * @param {Function} promise A function returning the promise to be added
  * @return {Promise} A promise
  */
 PromiseThrottle.prototype.add = function (promise) {
@@ -42,13 +36,15 @@ PromiseThrottle.prototype.add = function (promise) {
 
 /**
  * Adds all the promises passed as parameters
- * @param {array} promises An array of promises
+ * @param {Function} promises An array of functions that return a promise
  * @return {void}
  */
 PromiseThrottle.prototype.addAll = function (promises) {
-  promises.forEach(function(promise) {
-    this.add(promise);
+  var addedPromises = promises.map(function(promise) {
+    return this.add(promise);
   }.bind(this));
+
+  return Promise.all(addedPromises);
 };
 
 /**
@@ -89,4 +85,10 @@ PromiseThrottle.prototype._execute = function () {
 
 module.exports = PromiseThrottle;
 
-},{}]},{},[1]);
+},{}],2:[function(require,module,exports){
+/* global window */
+
+'use strict';
+window.PromiseThrottle = require('./main');
+
+},{"./main":1}]},{},[2]);
