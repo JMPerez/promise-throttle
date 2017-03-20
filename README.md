@@ -1,5 +1,4 @@
 Promise Throttle &nbsp; [![Build Status](https://api.travis-ci.org/JMPerez/promise-throttle.svg)](https://travis-ci.org/JMPerez/promise-throttle/) [![Coverage Status](https://coveralls.io/repos/github/JMPerez/promise-throttle/badge.svg?branch=master)](https://coveralls.io/r/JMPerez/promise-throttle?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/JMPerez/promise-throttle.svg)](https://greenkeeper.io/)
-
 ==================
 
 
