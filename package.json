@@ -25,10 +25,10 @@
     "lib/main.js"
   ],
   "devDependencies": {
-    "coveralls": "~2.11.2",
+    "coveralls": "~2.12.0",
     "eslint": "^3.8.0",
-    "jest-cli": "^16.0.2",
-    "promise": "~6.1.0",
-    "sinon": "~1.12.2"
+    "jest-cli": "^19.0.2",
+    "promise": "~7.1.1",
+    "sinon": "~2.1.0"
   }
 }
