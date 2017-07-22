@@ -28,7 +28,7 @@
     "coveralls": "~2.13.0",
     "eslint": "^3.19.0",
     "jest-cli": "^19.0.2",
-    "promise": "~7.1.1",
+    "promise": "~7.2.0",
     "sinon": "~2.2.0"
   }
 }
