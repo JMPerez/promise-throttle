@@ -147,36 +147,40 @@ describe('PromiseThrottle', function() {
     });
 
     it('should throttle properly the function calls, respecting the number of "requestsPerSecond" option', function(done) {
-      var pt10 = createPromiseThrottle(10);
+      var pt2 = createPromiseThrottle(2);
 
-      var count = 30,
-          fns = [],
-          resolvedCount = 0,
-          resolved = [],
-          fn = function() {
-            resolvedCount++;
-            return Promise.resolve();
-          };
+      var count = 8,
+        fns = [],
+        resolvedCount = 0,
+        resolved = [],
+        fn = function() {
+          resolvedCount++;
+          return Promise.resolve();
+        };
 
       while (count-- > 0) {
         fns.push(fn);
       }
 
-      pt10.addAll(fns);
+      pt2.addAll(fns);
 
       setTimeout(function() {
         resolved.push(resolvedCount);
-      }, 1000);
+      }, 700);
 
       setTimeout(function() {
         resolved.push(resolvedCount);
-      }, 2000);
+      }, 1700);
 
       setTimeout(function() {
         resolved.push(resolvedCount);
-        assert.deepEqual([10, 20, 30], resolved);
+      }, 2700);
+
+      setTimeout(function() {
+        resolved.push(resolvedCount);
+        assert.deepEqual([2, 4, 6, 8], resolved);
         done();
-      }, 3500);
+      }, 3700);
     });
 
   });
