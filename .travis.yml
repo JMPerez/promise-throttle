@@ -3,5 +3,4 @@ node_js:
   - "stable"
   - "7"
   - "6"
-  - "5"
 script: npm run travis
