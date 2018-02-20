@@ -183,6 +183,40 @@ describe('PromiseThrottle', function() {
       }, 3700);
     });
 
+
+    it('should throttle depending on call "weight"', function(done) {
+      var pt2 = createPromiseThrottle(2),
+        begin = new Date();
+
+      // By default weight is 1 so after this action delay should be 1/2 sec
+      pt2.add(function () {
+        return Promise.resolve();
+      });
+
+      // This action has weight 2 so delay ater it should be doubled (1 sec)
+      pt2.add(function () {
+        assert.equal(true, new Date() - begin >= 500);
+        return Promise.resolve();
+      }, 2);
+
+      // This is more heavy action (weight = 4) so delay should be x4 (2 sec)
+      pt2.add(function () {
+        assert.equal(true, new Date() - begin >= 1500);
+        return Promise.resolve();
+      }, 4);
+
+      // This action with default weight. So delay again 1/2 sec
+      pt2.add(function () {
+        assert.equal(true, new Date() - begin >= 3500);
+        return Promise.resolve();
+      });
+
+      pt2.add(function () {
+        assert.equal(true, new Date() - begin >= 4000);
+        done();
+        return Promise.resolve();
+      });
+    });
   });
 
 });

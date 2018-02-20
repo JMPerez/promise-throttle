@@ -53,6 +53,14 @@ The library can be used either server-side or in the browser.
     });
 ```
 
+Also you can specify `weight` parameter for each promise to dynamically adjust throttling depending on
+action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions. By default weight of all actions is 1.
+
+```javascript  
+  var regularAction = promiseThrottle.add(performRegularCall());
+  var heavyAction = promiseThrottle.add(performHeavyCall(), 2);
+```
+
 ## Installation
 
 For node.js, install the module with: `npm i promise-throttle`
