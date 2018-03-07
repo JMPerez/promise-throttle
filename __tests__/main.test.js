@@ -219,4 +219,28 @@ describe('PromiseThrottle', function() {
     });
   });
 
+  describe('#clear()', function() {
+    it('should clear the queued promises', function(done) {
+      var pt10 = createPromiseThrottle(1);
+      var resolved = [];
+      var fn1 = function() {
+        resolved.push(1);
+        return Promise.resolve();
+      };
+      var fn2 = function() {
+        resolved.push(2);
+        return Promise.resolve();
+      };
+
+      pt10.addAll([fn1, fn2]);
+      setTimeout(function() {
+        assert.deepEqual([1], resolved);
+        pt10.clear();
+      })
+      setTimeout(function() {
+        assert.deepEqual([1], resolved);
+        done();
+      }, 2000)
+    });
+  });
 });
