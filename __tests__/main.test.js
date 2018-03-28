@@ -197,13 +197,13 @@ describe('PromiseThrottle', function() {
       pt2.add(function () {
         assert.equal(true, new Date() - begin >= 500);
         return Promise.resolve();
-      }, 2);
+      }, {weight: 2});
 
       // This is more heavy action (weight = 4) so delay should be x4 (2 sec)
       pt2.add(function () {
         assert.equal(true, new Date() - begin >= 1500);
         return Promise.resolve();
-      }, 4);
+      }, {weight: 4});
 
       // This action with default weight. So delay again 1/2 sec
       pt2.add(function () {
@@ -216,6 +216,55 @@ describe('PromiseThrottle', function() {
         done();
         return Promise.resolve();
       });
+    });
+
+    it('should abort promises that have been queued', function(done) {
+      var controller = new AbortController();
+      var signal = controller.signal;
+      var results = [];
+      var pt = createPromiseThrottle(1);
+      var executed = 0;
+      pt.add(function() {
+        executed++;
+        return Promise.resolve();
+      }, {signal: signal});
+      pt.add(function() {
+        executed++;
+        return Promise.resolve();
+      }, {signal: signal})
+        .catch(function(e) {
+          assert.equal(1, executed);
+          done();
+        });
+      setTimeout(function() {
+        // calling abort will abort the second promise
+        // triggerring the `catch` function on the promise returned
+        // when adding the second one
+        controller.abort();
+      }, 500);
+    });
+
+    it('should abort promises that have been queued (using addAll)', function(done) {
+      var controller = new AbortController();
+      var signal = controller.signal;
+      var pt = createPromiseThrottle(1);
+      pt.addAll([
+        function() {
+          return Promise.resolve();
+        },
+        function() {
+          return Promise.resolve();
+        },
+        function() {
+          return Promise.resolve();
+        },
+        function() {
+          return Promise.resolve();
+        }
+      ], {signal: signal}).catch(function(e) {
+        done();
+      });
+      controller.abort();
     });
   });
 

@@ -53,12 +53,39 @@ The library can be used either server-side or in the browser.
     });
 ```
 
-Also you can specify `weight` parameter for each promise to dynamically adjust throttling depending on
+### Options
+
+**weight**
+You can specify `weight` option for each promise to dynamically adjust throttling depending on
 action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions. By default weight of all actions is 1.
 
-```javascript  
+```javascript
   var regularAction = promiseThrottle.add(performRegularCall());
-  var heavyAction = promiseThrottle.add(performHeavyCall(), 2);
+  var heavyAction = promiseThrottle.add(performHeavyCall(), {weight: 2});
+```
+
+**signal**
+You can cancel queued promises using [AbortController and AbortSignal](https://developer.mozilla.org/docs/Web/API/AbortController). For this, pass a `signal` option obtained from an `AbortController`. Once it is aborted, the promises queued using the signal will be rejected.
+
+If the environment where you are running the code doesn't support AbortController, you can use [a polyfill](https://github.com/mo/abortcontroller-polyfill).
+
+```js
+var controller = new AbortController();
+var signal = controller.signal;
+var pt = createPromiseThrottle(10);
+pt.addAll([
+  function() {
+    return fetch('example.com/a');
+  },
+  function() {
+    return fetch('example.com/b');
+  },
+  function() {
+    ...
+  }
+], {signal: signal});
+...
+controller.abort();
 ```
 
 ## Installation
