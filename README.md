@@ -1,7 +1,6 @@
 Promise Throttle &nbsp; [![Build Status](https://api.travis-ci.org/JMPerez/promise-throttle.svg)](https://travis-ci.org/JMPerez/promise-throttle/) [![Coverage Status](https://coveralls.io/repos/github/JMPerez/promise-throttle/badge.svg?branch=master)](https://coveralls.io/r/JMPerez/promise-throttle?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/JMPerez/promise-throttle.svg)](https://greenkeeper.io/)
 ==================
 
-
 This is a small library to limit the amount of promises run per unit of time. It is useful for scenarios such as Rest APIs consumption, where we are normally rate-limited to a certain amount of requests per time.
 
 It doesn't have any dependencies. If you are running this on Node.js, you will need to pass whatever Promise library you are using in the constructor.
@@ -56,9 +55,17 @@ The library can be used either server-side or in the browser.
 Also you can specify `weight` parameter for each promise to dynamically adjust throttling depending on
 action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions. By default weight of all actions is 1.
 
-```javascript  
+```javascript
   var regularAction = promiseThrottle.add(performRegularCall());
   var heavyAction = promiseThrottle.add(performHeavyCall(), 2);
+```
+
+In some cases it might be useful to clear the queued promises. For instance, if an operation that involves requests to an API gets cancelled:
+
+```javascript
+promiseThrottle.addAll(lotsOfPromises);
+// ...
+promiseThrottle.clear();
 ```
 
 ## Installation
