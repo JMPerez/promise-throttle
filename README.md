@@ -55,7 +55,7 @@ The library can be used either server-side or in the browser.
 
 ### Options
 
-**weight**
+#### weight
 You can specify `weight` option for each promise to dynamically adjust throttling depending on
 action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions. By default weight of all actions is 1.
 
@@ -64,29 +64,75 @@ action "heaviness". For example, action with `weight = 2` will be throttled as t
   var heavyAction = promiseThrottle.add(performHeavyCall(), {weight: 2});
 ```
 
-**signal**
-You can cancel queued promises using [AbortController and AbortSignal](https://developer.mozilla.org/docs/Web/API/AbortController). For this, pass a `signal` option obtained from an `AbortController`. Once it is aborted, the promises queued using the signal will be rejected.
+#### signal
+You can cancel queued promises using an [AbortSignal](https://developer.mozilla.org/docs/Web/API/AbortController). For this, pass a `signal` option obtained from an `AbortController`. Once it is aborted, the promises queued using the signal will be rejected.
 
 If the environment where you are running the code doesn't support AbortController, you can use [a polyfill](https://github.com/mo/abortcontroller-polyfill).
 
 ```js
-var controller = new AbortController();
-var signal = controller.signal;
-var pt = createPromiseThrottle(10);
-pt.addAll([
-  function() {
-    return fetch('example.com/a');
-  },
-  function() {
-    return fetch('example.com/b');
-  },
-  function() {
-    ...
-  }
-], {signal: signal});
-...
-controller.abort();
+  var controller = new AbortController();
+  var signal = controller.signal;
+  var pt = createPromiseThrottle(10);
+  pt.addAll([
+    function() {
+      return fetch('example.com/a');
+    },
+    function() {
+      return fetch('example.com/b');
+    },
+    function() {
+      ...
+    }
+  ], {signal: signal});
+  ...
+
+  // let's abort the promises
+  controller.abort();
 ```
+
+You can decide to make only specific promises abortable:
+
+```js
+  var controller = new AbortController();
+  var signal = controller.signal;
+  var pt = createPromiseThrottle(10);
+  pt.add(function() { return fetch('example.com/a') });
+  pt.add(function() { return fetch('example.com/b') }, {signal: signal});
+  pt.add(function() { return fetch('example.com/c') });
+  ...
+
+  // let's abort the second one
+  controller.abort();
+```
+
+When aborting, the promise returned by `add` or `addAll` is rejected with a specific error:
+
+```js
+  var controller = new AbortController();
+  var signal = controller.signal;
+  var pt = createPromiseThrottle(10);
+  pt.addAll([
+    function() {
+      return fetch('example.com/a');
+    },
+    function() {
+      return fetch('example.com/b');
+    },
+    function() {
+      ...
+    }
+  ], {signal: signal}).catch(function(e) {
+    if (e.name === 'AbortError') {
+      console.log('Promises aborted');
+    }
+  });
+  ...
+
+  // let's abort the promises
+  controller.abort();
+```
+
+
 
 ## Installation
 
