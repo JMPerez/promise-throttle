@@ -2,7 +2,7 @@ Promise Throttle &nbsp; [![Build Status](https://api.travis-ci.org/JMPerez/promi
 ==================
 
 
-This is a small library to limit the amount of promises run per unit of time. It is useful for scenarios such as Rest APIs consumption, where we are normally rate-limited to a certain amount of requests per time.
+This is a small ([~500B minified and compressed](https://cost-of-modules.herokuapp.com/result?p=promise-throttle)) dependency-free library to limit the amount of promises run per unit of time. It is useful for scenarios such as Rest APIs consumption, where we are normally rate-limited to a certain amount of requests per time.
 
 It doesn't have any dependencies. If you are running this on Node.js, you will need to pass whatever Promise library you are using in the constructor.
 
