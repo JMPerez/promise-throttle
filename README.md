@@ -60,8 +60,8 @@ You can specify `weight` option for each promise to dynamically adjust throttlin
 action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions. By default weight of all actions is 1.
 
 ```javascript
-  var regularAction = promiseThrottle.add(performRegularCall());
-  var heavyAction = promiseThrottle.add(performHeavyCall(), {weight: 2});
+  var regularAction = promiseThrottle.add(performRegularCall);
+  var heavyAction = promiseThrottle.add(performHeavyCall, {weight: 2});
 ```
 
 #### signal
