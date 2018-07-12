@@ -92,6 +92,26 @@ describe('PromiseThrottle', function() {
     });
   });
 
+  describe('event listener', function() {
+    it('should fire an event when new promise is dequeued', function() {
+      var pt1 = createPromiseThrottle(1);
+
+      var fn1 = function() {
+        return new Promise(function(resolve, _) {
+          var rand = Math.floor(Math.random() * Math.floor(1000));
+          setTimeout(function() {
+            resolve();
+          }, rand);
+        });
+      };
+
+      pt1.add(fn1);
+      pt1.on('queueSizeChanged', function(queueSize) {
+        assert(true);
+      });
+    });
+  })
+
   describe('#addAll([fn1, fn2, ...])', function() {
     it('should add all the functions passed as parameter', function() {
       var pt10 = createPromiseThrottle(10);
