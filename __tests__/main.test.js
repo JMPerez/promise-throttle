@@ -94,21 +94,21 @@ describe('PromiseThrottle', function() {
 
   describe('event listener', function() {
     it('should fire an event when new promise is dequeued', function() {
-      var pt1 = createPromiseThrottle(1);
+      var pt1 = new PromiseThrottle({
+        requestsPerSecond: 1,
+        promiseImplementation: Promise,
+        onQueueSizeChange: function(queueSize) {
+          assert(true);
+        }
+      });
 
       var fn1 = function() {
         return new Promise(function(resolve, _) {
-          var rand = Math.floor(Math.random() * Math.floor(1000));
-          setTimeout(function() {
-            resolve();
-          }, rand);
+          resolve();
         });
       };
 
       pt1.add(fn1);
-      pt1.on('queueSizeChanged', function(queueSize) {
-        assert(true);
-      });
     });
   })
 
