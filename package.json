@@ -27,8 +27,11 @@
   "devDependencies": {
     "coveralls": "~3.0.0",
     "eslint": "^4.18.0",
-    "jest-cli": "^23.0.0",
+    "jest-cli": "^23.4.1",
     "promise": "^8.0.0",
     "sinon": "^6.0.0"
+  },
+  "jest": {
+    "testURL": "http://localhost/"
   }
 }
