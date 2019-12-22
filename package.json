@@ -29,7 +29,7 @@
     "eslint": "^6.1.0",
     "jest-cli": "^24.8.0",
     "promise": "^8.0.2",
-    "sinon": "^7.2.3"
+    "sinon": "^8.0.0"
   },
   "jest": {
     "testURL": "http://localhost/"
