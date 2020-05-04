@@ -33,8 +33,7 @@
     "eslint": "^6.1.0",
     "jest-cli": "^26.0.0",
     "microbundle": "^0.11.0",
-    "promise": "^8.1.0",
-    "sinon": "^9.0.2"
+    "promise": "^8.1.0"
   },
   "jest": {
     "testURL": "http://localhost/"
