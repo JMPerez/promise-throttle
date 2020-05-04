@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "npm run dist",
-    "lint": "eslint lib/*.js",
+    "lint": "eslint lib/*.js __tests__/*.js",
     "test": "jest --coverage",
     "travis": "npm test && cat ./coverage/lcov.info | coveralls",
     "build": "microbundle",
