@@ -1,12 +1,6 @@
-/* global describe, it */
-
-"use strict";
-
-var assert = require("assert");
-var sinon = require("sinon");
-var Promise = require("promise");
-
-var PromiseThrottle = require("../dist/promise-throttle.js");
+import assert from "assert";
+import Promise from "promise";
+import PromiseThrottle from "../lib/main.js";
 
 function createPromiseThrottle(rps) {
   return new PromiseThrottle({

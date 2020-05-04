@@ -14,7 +14,7 @@
   "scripts": {
     "start": "npm run dist",
     "lint": "eslint lib/*.js",
-    "test": "npm run build && jest --coverage",
+    "test": "jest --coverage",
     "travis": "npm test && cat ./coverage/lcov.info | coveralls",
     "build": "microbundle",
     "prepare": "npm run build",
@@ -28,6 +28,7 @@
     "lib/main.js"
   ],
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.9.6",
     "coveralls": "^3.1.0",
     "eslint": "^6.1.0",
     "jest-cli": "^26.0.0",
