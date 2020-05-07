@@ -27,3 +27,7 @@ rules:
     spaced-comment: [2, "always", { exceptions: ["-"]}]
     valid-jsdoc: [2]
     wrap-iife: [2, "any"]
+
+parserOptions:
+    ecmaVersion: 2018
+    sourceType: "module"
