@@ -22,7 +22,8 @@
     "throttle"
   ],
   "files": [
-    "lib/main.js"
+    "lib/main.js",
+    "index.d.ts"
   ],
   "devDependencies": {
     "browserify": "^16.5.1",
