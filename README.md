@@ -2,7 +2,7 @@ Promise Throttle &nbsp; [![Build Status](https://api.travis-ci.org/JMPerez/promi
 ==================
 
 
-This small ([~500B minified and compressed](https://cost-of-modules.herokuapp.com/result?p=promise-throttle)) dependency-free library limits promises run per unit of time. Useful for Rest API consumption, which is normally rate-limited to a certain number of requests in a set amount of time.
+This small ([~530B minified and compressed](https://cost-of-modules.herokuapp.com/result?p=promise-throttle)) dependency-free library limits promises run per unit of time. Useful for Rest API consumption, which is normally rate-limited to a certain number of requests in a set amount of time.
 
 On Node.js, pass the Promise library you are using to the constructor.
 
