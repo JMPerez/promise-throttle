@@ -8,8 +8,10 @@ export interface QueueOptions {
   signal?: AbortSignal
 }
 
+type PromiseCreator<T> = () => Promise<T>
+
 export default class PromiseThrottle {
   constructor(options: ThrottleOptions)
-  add<T>(promise: Promise<T>, opts?: QueueOptions): Promise<T>
-  addAll<T>(promises: Promise<T>[], opts?: QueueOptions): Promise<T[]>
+  add<T>(promiseCreator: PromiseCreator<T>, opts?: QueueOptions): Promise<T>
+  addAll<T>(promisesCreators: PromiseCreator<T>[], opts?: QueueOptions): Promise<T[]>
 }
