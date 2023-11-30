@@ -1,4 +1,4 @@
-(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /* global window */
 
 'use strict';
@@ -8,6 +8,8 @@ window.PromiseThrottle = require('./main');
 /* exported PromiseThrottle */
 
 'use strict';
+
+var QueueLinkedList = require('./queueLinkedList');
 
 /**
  * @constructor
@@ -19,7 +21,7 @@ function PromiseThrottle(options) {
   this.requestsPerSecond = options.requestsPerSecond;
   this.promiseImplementation = options.promiseImplementation || Promise;
   this.lastStartTime = 0;
-  this.queued = [];
+  this.queued = new QueueLinkedList();
 }
 
 /**
@@ -34,7 +36,7 @@ PromiseThrottle.prototype.add = function(promise, options) {
   var self = this;
   var opt = options || {};
   return new self.promiseImplementation(function(resolve, reject) {
-    self.queued.push({
+    self.queued.add({
       resolve: resolve,
       reject: reject,
       promise: promise,
@@ -67,9 +69,9 @@ PromiseThrottle.prototype.addAll = function(promises, options) {
  * @return {void}
  */
 PromiseThrottle.prototype.dequeue = function() {
-  if (this.queued.length > 0) {
+  if (this.queued.getLength() > 0) {
     var now = new Date(),
-      weight = this.queued[0].weight,
+      weight = this.queued.getFirst().weight,
       inc = (1000 / this.requestsPerSecond) * weight,
       elapsed = now - this.lastStartTime;
 
@@ -105,5 +107,45 @@ PromiseThrottle.prototype._execute = function() {
 };
 
 module.exports = PromiseThrottle;
+
+},{"./queueLinkedList":3}],3:[function(require,module,exports){
+'use strict';
+
+function QueueLinkedList() {
+  this.length = 0;
+}
+
+QueueLinkedList.prototype.add = function(value) {
+  if (this.queue) {
+    this.lastElement.next = {value: value};
+    this.lastElement = this.lastElement.next;
+  } else {
+    this.queue = {value: value};
+    this.lastElement = this.queue;
+  }
+  ++this.length;
+};
+
+QueueLinkedList.prototype.getFirst = function() {
+  return this.queue && this.queue.value;
+};
+
+QueueLinkedList.prototype.shift = function() {
+  var value = this.queue && this.queue.value;
+
+  if (value) {
+    this.queue = this.queue.next;
+    this.lastElement = this.queue;
+    --this.length;
+  }
+
+  return value;
+};
+
+QueueLinkedList.prototype.getLength = function() {
+  return this.length;
+}
+
+module.exports = QueueLinkedList;
 
 },{}]},{},[1]);
