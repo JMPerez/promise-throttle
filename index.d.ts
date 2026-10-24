@@ -1,17 +1,21 @@
-export interface ThrottleOptions {
-  requestsPerSecond: number
-  promiseImplementation?: PromiseConstructorLike
+declare namespace PromiseThrottle {
+  interface ThrottleOptions {
+    requestsPerSecond: number
+    promiseImplementation?: PromiseConstructorLike
+  }
+
+  interface QueueOptions {
+    weight?: number
+    signal?: AbortSignal
+  }
+
+  type PromiseCreator<T> = () => T | PromiseLike<T>
 }
 
-export interface QueueOptions {
-  weight?: number
-  signal?: AbortSignal
+declare class PromiseThrottle {
+  constructor(options: PromiseThrottle.ThrottleOptions)
+  add<T>(promiseCreator: PromiseThrottle.PromiseCreator<T>, opts?: PromiseThrottle.QueueOptions): Promise<T>
+  addAll<T>(promisesCreators: PromiseThrottle.PromiseCreator<T>[], opts?: PromiseThrottle.QueueOptions): Promise<T[]>
 }
 
-type PromiseCreator<T> = () => Promise<T>
-
-export default class PromiseThrottle {
-  constructor(options: ThrottleOptions)
-  add<T>(promiseCreator: PromiseCreator<T>, opts?: QueueOptions): Promise<T>
-  addAll<T>(promisesCreators: PromiseCreator<T>[], opts?: QueueOptions): Promise<T[]>
-}
+export = PromiseThrottle
