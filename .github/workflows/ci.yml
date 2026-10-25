@@ -23,3 +23,5 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run dist
+      - name: Check that the browser build is up to date
+        run: git diff --exit-code dist
