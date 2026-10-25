@@ -1,7 +1,7 @@
 {
   "name": "promise-throttle",
   "version": "2.0.0",
-  "homepage": "https://github.com/jmperez/promise-throttle",
+  "homepage": "https://jmperez.github.io/promise-throttle/",
   "description": "A library to throttle promises",
   "main": "lib/main.js",
   "types": "index.d.ts",
@@ -17,7 +17,8 @@
     "start": "npm run dist",
     "dist": "esbuild lib/browser.js --bundle --target=es5 --outfile=dist/promise-throttle.js",
     "lint": "eslint lib",
-    "test": "npm run lint && jest --coverage"
+    "test": "npm run lint && jest --coverage",
+    "docs": "typedoc"
   },
   "keywords": [
     "promise",
@@ -35,6 +36,8 @@
     "eslint": "^10.13.0",
     "globals": "^17.13.0",
     "jest": "^30.5.2",
-    "promise": "^8.3.0"
+    "promise": "^8.3.0",
+    "typedoc": "^0.28.20",
+    "typescript": "~6.0"
   }
 }

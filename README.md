@@ -6,6 +6,8 @@ This small ([less than 1KB minified and compressed](https://bundlephobia.com/pac
 
 To use, simply add functions to the `PromiseThrottle` that, once called, return a `Promise`.
 
+The API reference is available at [jmperez.github.io/promise-throttle](https://jmperez.github.io/promise-throttle/).
+
 ## Use
 
 The library can be used either server-side or in the browser.
@@ -67,7 +69,7 @@ The `Promise` constructor used to create the promises returned by `add` and `add
   });
 ```
 
-### Options for `add` and `addAll`
+### Options for add and addAll
 
 #### weight
 You can specify `weight` option for each promise to dynamically adjust throttling depending on
@@ -174,7 +176,7 @@ If you are using it in a browser without a bundler, you can load it from a CDN. 
 ## Development
 
 Install the dependencies using `npm install`.
-Run `npm test` to lint and run the tests with code coverage, and `npm run dist` to generate the browser build.
+Run `npm test` to lint and run the tests with code coverage, `npm run dist` to generate the browser build, and `npm run docs` to generate the documentation site in `docs/`.
 
 ## Projects using it
 
