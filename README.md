@@ -8,49 +8,39 @@ To use, simply add functions to the `PromiseThrottle` that, once called, return 
 
 The API reference is available at [jmperez.github.io/promise-throttle](https://jmperez.github.io/promise-throttle/).
 
+## Installation
+
+```sh
+npm install promise-throttle
+```
+
+It works in Node.js 14+ and modern browsers. If you are using it in a browser without a bundler, you can load it from a CDN. It exposes a global `PromiseThrottle`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/promise-throttle@2"></script>
+<script>
+  const throttle = new PromiseThrottle({ requestsPerSecond: 5 });
+</script>
+```
+
 ## Use
 
-The library can be used either server-side or in the browser.
+```js
+import PromiseThrottle from 'promise-throttle'; // or: const PromiseThrottle = require('promise-throttle');
 
-```javascript
-  var PromiseThrottle = require('promise-throttle');
-  /**
-   * A function that once called returns a promise
-   * @return Promise
-   */
-  var myFunction = function(i) {
-    return new Promise(function(resolve, reject) {
-      // here we simulate that the promise runs some code
-      // asynchronously
-      setTimeout(function() {
-        console.log(i + ": " + Math.random());
-        resolve(i);
-      }, 10);
-    });
-  };
+const throttle = new PromiseThrottle({ requestsPerSecond: 2 });
 
-  var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 1 // up to 1 request per second
-  });
+// Pass a function that returns a promise. It is called when the throttling allows it
+const response = await throttle.add(() => fetch('https://api.example.com/users/1'));
 
-  var amountOfPromises = 10;
-  while (amountOfPromises-- > 0) {
-    promiseThrottle.add(myFunction.bind(this, amountOfPromises))
-      .then(function(i) {
-        console.log("Promise " + i + " done");
-      });
-  }
-
-  // example using Promise.all
-  var one = promiseThrottle.add(myFunction.bind(this, 1));
-  var two = promiseThrottle.add(myFunction.bind(this, 2));
-  var three = promiseThrottle.add(myFunction.bind(this, 3));
-
-  Promise.all([one, two, three])
-    .then(function(r) {
-        console.log("Promises " + r.join(", ") + " done");
-    });
+// Queue several functions at once. These 6 requests are spread over ~2.5 seconds
+const ids = [1, 2, 3, 4, 5, 6];
+const users = await throttle.addAll(
+  ids.map((id) => () => fetch(`https://api.example.com/users/${id}`).then((res) => res.json()))
+);
 ```
+
+Make sure you pass a function and not a promise: `throttle.add(fetch(url))` would send the request right away, because the promise has already been created.
 
 The promise returned by `add` is resolved or rejected with the result of the function. If the function throws, the promise is rejected with the thrown error, and if it returns a value that is not a promise, the promise is resolved with that value.
 
@@ -62,89 +52,48 @@ The maximum amount of functions that will be called per second. It must be a pos
 #### promiseImplementation
 The `Promise` constructor used to create the promises returned by `add` and `addAll`. It defaults to the native `Promise`, so you only need it if you want to use a different library (e.g. [promise](https://www.npmjs.com/package/promise) or [bluebird](https://www.npmjs.com/package/bluebird)).
 
-```javascript
-  var promiseThrottle = new PromiseThrottle({
-    requestsPerSecond: 5,
-    promiseImplementation: require('bluebird')
-  });
+```js
+import Bluebird from 'bluebird';
+
+const throttle = new PromiseThrottle({
+  requestsPerSecond: 5,
+  promiseImplementation: Bluebird
+});
 ```
 
 ### Options for add and addAll
 
 #### weight
-You can specify `weight` option for each promise to dynamically adjust throttling depending on
-action "heaviness". For example, action with `weight = 2` will be throttled as two regular actions: it is started as soon as it is its turn, and the next action waits twice as long as it would after a regular one. By default weight of all actions is 1.
+You can specify `weight` option for each function to dynamically adjust throttling depending on
+action "heaviness". For example, an action with `weight: 3` will be throttled as three regular actions: it is called as soon as it is its turn, and the next action waits three times as long as it would after a regular one. By default weight of all actions is 1.
 
-```javascript
-  var regularAction = promiseThrottle.add(performRegularCall);
-  var heavyAction = promiseThrottle.add(performHeavyCall, {weight: 2});
+```js
+// The search endpoint counts as 3 requests in the API rate limit
+throttle.add(() => fetch('https://api.example.com/search?q=foo'), { weight: 3 });
 ```
 
 #### signal
-You can cancel queued promises using an [AbortSignal](https://developer.mozilla.org/docs/Web/API/AbortController). For this, pass a `signal` option obtained from an `AbortController`. Once it is aborted, the queued promises using the signal are rejected right away, and they don't count towards the limit of requests per second. Functions that have already been called are not affected.
+You can cancel queued functions using an [AbortSignal](https://developer.mozilla.org/docs/Web/API/AbortController). Once it is aborted, the queued functions added with the signal are not called and their promises are rejected right away, without counting towards the limit of requests per second. Functions added without the signal are not affected, so you can make only some of them abortable.
+
+Functions that have already been called are not affected either, but you can pass the same signal to them (e.g. to `fetch`) to cancel what they are doing:
 
 ```js
-  var controller = new AbortController();
-  var signal = controller.signal;
-  var pt = new PromiseThrottle({ requestsPerSecond: 10 });
-  pt.addAll([
-    function() {
-      return fetch('example.com/a');
-    },
-    function() {
-      return fetch('example.com/b');
-    },
-    function() {
-      ...
-    }
-  ], {signal: signal});
-  ...
+const controller = new AbortController();
+const { signal } = controller;
 
-  // let's abort the promises
-  controller.abort();
-```
-
-You can decide to make only specific promises abortable:
-
-```js
-  var controller = new AbortController();
-  var signal = controller.signal;
-  var pt = new PromiseThrottle({ requestsPerSecond: 10 });
-  pt.add(function() { return fetch('example.com/a') });
-  pt.add(function() { return fetch('example.com/b') }, {signal: signal});
-  pt.add(function() { return fetch('example.com/c') });
-  ...
-
-  // let's abort the second one
-  controller.abort();
-```
-
-When aborting, the promise returned by `add` or `addAll` is rejected with the reason of the signal, which is an `AbortError` unless you pass a different one to `controller.abort(reason)`. In environments that don't support `signal.reason`, it is rejected with an error whose `name` is `AbortError`:
-
-```js
-  var controller = new AbortController();
-  var signal = controller.signal;
-  var pt = new PromiseThrottle({ requestsPerSecond: 10 });
-  pt.addAll([
-    function() {
-      return fetch('example.com/a');
-    },
-    function() {
-      return fetch('example.com/b');
-    },
-    function() {
-      ...
-    }
-  ], {signal: signal}).catch(function(e) {
-    if (e.name === 'AbortError') {
-      console.log('Promises aborted');
+throttle
+  .addAll(urls.map((url) => () => fetch(url, { signal })), { signal })
+  .catch((error) => {
+    if (error.name === 'AbortError') {
+      console.log('Requests cancelled');
     }
   });
-  ...
 
-  // let's abort the promises
-  controller.abort();
+// later, e.g. when the user leaves the page
+controller.abort();
 ```
+
+When aborting, the promise returned by `add` or `addAll` is rejected with the reason of the signal, which is an `AbortError` unless you pass a different one to `controller.abort(reason)`. In environments that don't support `signal.reason`, it is rejected with an error whose `name` is `AbortError`.
 
 ## TypeScript
 
@@ -155,16 +104,6 @@ import PromiseThrottle, { QueueOptions } from 'promise-throttle';
 ```
 
 Otherwise use `import PromiseThrottle = require('promise-throttle');`.
-
-## Installation
-
-For node.js, install the module with: `npm i promise-throttle`
-
-If you are using it in a browser without a bundler, you can load it from a CDN. It exposes a global `PromiseThrottle`:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/promise-throttle@2"></script>
-```
 
 ## Upgrading from 1.x
 
@@ -184,7 +123,6 @@ See how some projects are using it:
 
 - [ivasilov/promised-twitter](https://github.com/ivasilov/promised-twitter)
 - [JMPerez/spotify-dedup](https://github.com/JMPerez/spotify-dedup)
-- [johannesss/randify](https://github.com/johannesss/randify)
 - [JoseBarrios/mturk-api](https://github.com/JoseBarrios/mturk-api)
 - [zackiles/lucy-bot](https://github.com/zackiles/lucy-bot)
 
