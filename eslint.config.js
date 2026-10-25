@@ -9,8 +9,8 @@ module.exports = [
   {
     files: ['lib/**/*.js'],
     languageOptions: {
-      // the library is shipped without transpiling, so keep it ES2020
-      ecmaVersion: 2020,
+      // the library is shipped without transpiling, so keep it ES2022
+      ecmaVersion: 2022,
       sourceType: 'commonjs',
       globals: Object.assign({}, globals.node, globals.browser)
     },

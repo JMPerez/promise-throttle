@@ -298,34 +298,14 @@ describe('PromiseThrottle', () => {
       await assert.rejects(promise, (error) => error === reason);
     });
 
-    it('should support signals that do not dispatch events', async () => {
-      const signal = { aborted: false };
+    it('should reject with an AbortError when the signal has no reason', async () => {
       const pt = new PromiseThrottle({ requestsPerSecond: 1 });
 
-      pt.add(track);
-      const aborted = assert.rejects(pt.add(track, { signal }), { name: 'AbortError' });
-      const last = pt.add(track);
-
-      signal.aborted = true;
-      await jest.advanceTimersByTimeAsync(1000);
-      await Promise.all([aborted, last]);
-
-      assert.deepStrictEqual(startTimes, [0, 1000]);
-    });
-
-    it('should reject with an AbortError when DOMException is not available', async () => {
-      const originalDOMException = global.DOMException;
-      global.DOMException = undefined;
-
-      try {
-        const pt = new PromiseThrottle({ requestsPerSecond: 1 });
-        await assert.rejects(
-          pt.add(track, { signal: { aborted: true } }),
-          (error) => error instanceof Error && error.name === 'AbortError'
-        );
-      } finally {
-        global.DOMException = originalDOMException;
-      }
+      await assert.rejects(
+        pt.add(track, { signal: { aborted: true } }),
+        (error) => error instanceof DOMException && error.name === 'AbortError'
+      );
+      assert.deepStrictEqual(startTimes, []);
     });
 
     it('should stop listening to the signal once the function is called', async () => {

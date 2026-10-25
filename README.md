@@ -14,7 +14,7 @@ The API reference is available at [jmperez.github.io/promise-throttle](https://j
 npm install promise-throttle
 ```
 
-It works in Node.js 14+ and modern browsers. If you are using it in a browser without a bundler, you can load it from a CDN. It exposes a global `PromiseThrottle`:
+It works in Node.js 18+ and modern browsers. If you are using it in a browser without a bundler, you can load it from a CDN. It exposes a global `PromiseThrottle`:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/promise-throttle@2"></script>
@@ -93,7 +93,7 @@ throttle
 controller.abort();
 ```
 
-When aborting, the promise returned by `add` or `addAll` is rejected with the reason of the signal, which is an `AbortError` unless you pass a different one to `controller.abort(reason)`. In environments that don't support `signal.reason`, it is rejected with an error whose `name` is `AbortError`.
+When aborting, the promise returned by `add` or `addAll` is rejected with the reason of the signal, which is an `AbortError` unless you pass a different one to `controller.abort(reason)`.
 
 ## TypeScript
 
