@@ -1,8 +1,0 @@
-language: node_js
-node_js:
-  - "stable"
-before_install:
-- npm install -g greenkeeper-lockfile
-before_script: greenkeeper-lockfile-update
-after_script: greenkeeper-lockfile-upload
-script: npm run travis
