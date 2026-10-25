@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmperez/promise-throttle.git"
+    "url": "git+https://github.com/jmperez/promise-throttle.git"
   },
   "scripts": {
     "start": "npm run dist",
