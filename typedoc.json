@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["typedoc-entry.d.ts"],
+  "out": "docs",
+  "includeVersion": true,
+  "treatWarningsAsErrors": true,
+  "navigationLinks": {
+    "GitHub": "https://github.com/JMPerez/promise-throttle",
+    "npm": "https://www.npmjs.com/package/promise-throttle"
+  }
+}
