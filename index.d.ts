@@ -49,15 +49,10 @@ declare namespace PromiseThrottle {
  *
  * @example
  * ```js
- * var promiseThrottle = new PromiseThrottle({ requestsPerSecond: 2 });
+ * const throttle = new PromiseThrottle({ requestsPerSecond: 2 });
  *
- * promiseThrottle
- *   .add(function() {
- *     return fetch('https://example.com/a');
- *   })
- *   .then(function(response) {
- *     console.log(response.status);
- *   });
+ * const response = await throttle.add(() => fetch('https://example.com/a'));
+ * console.log(response.status);
  * ```
  */
 declare class PromiseThrottle {

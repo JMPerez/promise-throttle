@@ -1,115 +1,129 @@
 "use strict";
-(function() {
+(() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = function(cb, mod) {
-    return function __require() {
-      try {
-        return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-      } catch (e) {
-        throw mod = 0, e;
-      }
-    };
+  var __commonJS = (cb, mod) => function __require() {
+    try {
+      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    } catch (e) {
+      throw mod = 0, e;
+    }
   };
 
   // lib/main.js
   var require_main = __commonJS({
-    "lib/main.js": function(exports, module) {
+    "lib/main.js"(exports, module) {
       "use strict";
       function getAbortReason(signal) {
-        if (typeof signal.reason !== "undefined") {
-          return signal.reason;
-        }
-        if (typeof DOMException === "function") {
-          return new DOMException("The operation was aborted.", "AbortError");
-        }
-        var error = new Error("The operation was aborted.");
-        error.name = "AbortError";
-        return error;
+        return signal.reason ?? new DOMException("The operation was aborted.", "AbortError");
       }
-      function removeAbortListener(candidate) {
-        if (candidate.onAbort) {
-          candidate.signal.removeEventListener("abort", candidate.onAbort);
-        }
-      }
-      function PromiseThrottle(options) {
-        var opt = options || {};
-        if (typeof opt.requestsPerSecond !== "number" || !(opt.requestsPerSecond > 0)) {
-          throw new TypeError("requestsPerSecond must be a positive number");
-        }
-        this.requestsPerSecond = opt.requestsPerSecond;
-        this.promiseImplementation = opt.promiseImplementation || Promise;
-        this.lastStartTime = 0;
-        this.lastWeight = 0;
-        this.queued = [];
-        this.timer = null;
-      }
-      PromiseThrottle.prototype.add = function(promise, options) {
-        var self = this;
-        var opt = options || {};
-        return new self.promiseImplementation(function(resolve, reject) {
-          var signal = opt.signal;
-          if (signal && signal.aborted) {
-            reject(getAbortReason(signal));
-            return;
+      var PromiseThrottle = class {
+        #requestsPerSecond;
+        #promiseImplementation;
+        #lastStartTime = 0;
+        #lastWeight = 0;
+        #queued = [];
+        #timer = null;
+        /**
+         * @param {Object} options A set of options to pass to the throttle function
+         * @param {number} options.requestsPerSecond The amount of requests per second
+         *                                           the library will limit to
+         * @param {Function} [options.promiseImplementation] The Promise constructor to
+         *                                                   use. Defaults to Promise
+         */
+        constructor(options) {
+          const { requestsPerSecond, promiseImplementation } = options || {};
+          if (typeof requestsPerSecond !== "number" || !(requestsPerSecond > 0)) {
+            throw new TypeError("requestsPerSecond must be a positive number");
           }
-          var candidate = {
-            resolve: resolve,
-            reject: reject,
-            promise: promise,
-            weight: opt.weight || 1,
-            signal: signal
-          };
-          if (signal && typeof signal.addEventListener === "function") {
-            candidate.onAbort = function() {
-              self._abort(candidate);
+          this.#requestsPerSecond = requestsPerSecond;
+          this.#promiseImplementation = promiseImplementation || Promise;
+        }
+        /**
+         * Adds a promise
+         * @param {Function} promise A function returning the promise to be added
+         * @param {Object} options A set of options.
+         * @param {AbortSignal} options.signal An AbortSignal object that can be used to abort the returned promise
+         * @param {number} options.weight A "weight" of each operation resolving by array of promises
+         * @return {Promise} A promise
+         */
+        add(promise, options) {
+          const { signal, weight } = options || {};
+          return new this.#promiseImplementation((resolve, reject) => {
+            if (signal?.aborted) {
+              reject(getAbortReason(signal));
+              return;
+            }
+            const candidate = {
+              resolve,
+              reject,
+              promise,
+              weight: weight || 1,
+              signal
             };
-            signal.addEventListener("abort", candidate.onAbort);
-          }
-          self.queued.push(candidate);
-          self.dequeue();
-        });
-      };
-      PromiseThrottle.prototype.addAll = function(promises, options) {
-        var addedPromises = promises.map(function(promise) {
-          return this.add(promise, options);
-        }.bind(this));
-        return this.promiseImplementation.all(addedPromises);
-      };
-      PromiseThrottle.prototype.dequeue = function() {
-        while (this.queued.length > 0 && !this.timer) {
-          var candidate = this.queued[0];
-          if (candidate.signal && candidate.signal.aborted) {
-            this._abort(candidate);
-            continue;
-          }
-          var inc = 1e3 / this.requestsPerSecond * this.lastWeight, elapsed = Date.now() - this.lastStartTime;
-          if (elapsed >= inc) {
-            this._execute();
-          } else {
-            this.timer = setTimeout(function() {
-              this.timer = null;
-              this.dequeue();
-            }.bind(this), inc - elapsed);
+            if (signal) {
+              candidate.onAbort = () => this.#abort(candidate);
+              signal.addEventListener("abort", candidate.onAbort);
+            }
+            this.#queued.push(candidate);
+            this.#dequeue();
+          });
+        }
+        /**
+         * Adds all the promises passed as parameters
+         * @param {Function[]} promises An array of functions that return a promise
+         * @param {Object} options A set of options.
+         * @param {AbortSignal} options.signal An AbortSignal object that can be used to abort the returned promise
+         * @param {number} options.weight A "weight" of each operation resolving by array of promises
+         * @return {Promise} A promise that succeeds when all the promises passed as options do
+         */
+        addAll(promises, options) {
+          return this.#promiseImplementation.all(promises.map((promise) => this.add(promise, options)));
+        }
+        /**
+         * Calls the queued functions, scheduling a single timer when the limit is reached
+         * @return {void}
+         */
+        #dequeue() {
+          while (this.#queued.length > 0 && !this.#timer) {
+            const inc = 1e3 / this.#requestsPerSecond * this.#lastWeight;
+            const elapsed = Date.now() - this.#lastStartTime;
+            if (elapsed >= inc) {
+              this.#execute();
+            } else {
+              this.#timer = setTimeout(() => {
+                this.#timer = null;
+                this.#dequeue();
+              }, inc - elapsed);
+            }
           }
         }
-      };
-      PromiseThrottle.prototype._abort = function(candidate) {
-        var index = this.queued.indexOf(candidate);
-        if (index !== -1) {
-          this.queued.splice(index, 1);
-          removeAbortListener(candidate);
-          candidate.reject(getAbortReason(candidate.signal));
+        /**
+         * Removes an aborted operation from the queue and rejects its promise
+         * @param {Object} candidate The queued operation
+         * @return {void}
+         */
+        #abort(candidate) {
+          const index = this.#queued.indexOf(candidate);
+          if (index !== -1) {
+            this.#queued.splice(index, 1);
+            candidate.signal.removeEventListener("abort", candidate.onAbort);
+            candidate.reject(getAbortReason(candidate.signal));
+          }
         }
-      };
-      PromiseThrottle.prototype._execute = function() {
-        var candidate = this.queued.shift();
-        removeAbortListener(candidate);
-        this.lastStartTime = Date.now();
-        this.lastWeight = candidate.weight;
-        try {
-          candidate.resolve(candidate.promise());
-        } catch (e) {
-          candidate.reject(e);
+        /**
+         * Executes the promise
+         * @return {void}
+         */
+        #execute() {
+          const candidate = this.#queued.shift();
+          candidate.signal?.removeEventListener("abort", candidate.onAbort);
+          this.#lastStartTime = Date.now();
+          this.#lastWeight = candidate.weight;
+          try {
+            candidate.resolve(candidate.promise());
+          } catch (e) {
+            candidate.reject(e);
+          }
         }
       };
       module.exports = PromiseThrottle;

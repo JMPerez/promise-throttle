@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "npm run dist",
-    "dist": "esbuild lib/browser.js --bundle --target=es5 --outfile=dist/promise-throttle.js",
+    "dist": "esbuild lib/browser.js --bundle --target=es2022 --outfile=dist/promise-throttle.js",
     "lint": "eslint lib",
     "test": "npm run lint && jest --coverage",
     "docs": "typedoc"

@@ -9,10 +9,10 @@ module.exports = [
   {
     files: ['lib/**/*.js'],
     languageOptions: {
-      // the library is shipped without transpiling, so keep it ES5
-      ecmaVersion: 5,
+      // the library is shipped without transpiling, so keep it ES2022
+      ecmaVersion: 2022,
       sourceType: 'commonjs',
-      globals: Object.assign({ Promise: 'readonly' }, globals.node, globals.browser)
+      globals: Object.assign({}, globals.node, globals.browser)
     },
     plugins: {
       '@stylistic': stylistic
@@ -31,6 +31,8 @@ module.exports = [
       'no-undefined': 2,
       'no-underscore-dangle': 0,
       'no-unreachable': 2,
+      'no-var': 2,
+      'prefer-const': 2,
       'radix': 2,
       '@stylistic/brace-style': [2, '1tbs'],
       '@stylistic/comma-style': [2, 'last'],
