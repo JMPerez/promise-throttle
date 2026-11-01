@@ -38,6 +38,6 @@
     "jest": "^30.5.2",
     "promise": "^8.3.0",
     "typedoc": "^0.28.20",
-    "typescript": "~6.0"
+    "typescript": "~7.0"
   }
 }
